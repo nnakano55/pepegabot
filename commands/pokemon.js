@@ -1,8 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-const DOMParser = require('dom-parser');
+const Pokemon = require('../app_modules/pokemonMessage')
 
-const { MessageEmbed, MessageAttachment } = require('discord.js');
+/*
+//const DOMParser = require('dom-parser');
+
+const { MessageEmbed, MessageAttachment, MessageActionRow, MessageSelectMenu } = require('discord.js');
 
 const dbSearchURL = 'https://pokemondb.net/pokedex/national';
 
@@ -10,9 +13,27 @@ const dbPartialURL = 'https://pokemondb.net/pokedex/';
 
 const nodeHtmlToImage = require('node-html-to-image')
 
+
+
 //const fetch = require('node-fetch');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
+function createSelectMenu(forms, currentform){
+	const row = new MessageActionRow().addComponents(
+		new MessageSelectMenu()
+			.setCustomId('select')
+			.setPlaceholder(currentform)
+			.addOptions(forms.map((data) => createFormOption(data.pokemon)))
+	);
+	return row;
+}
+
+function createFormOption(form){
+	return {
+		label: form.name,
+		value: form.url
+	};
+}
 
 function createEmbedMessage(name, dexURL, imgURL, type, ability, stats, placeholder){
 	const embed = new MessageEmbed()
@@ -22,10 +43,6 @@ function createEmbedMessage(name, dexURL, imgURL, type, ability, stats, placehol
 		.setDescription(`Type: ${type.join('/')}\nAbilities: ${ability.join('/')}`)
 		.setImage(placeholder ? 'attachment://placeholder.jpeg':`attachment://${name}.jpeg`)
 		.setThumbnail(imgURL)
-		/*.addFields(
-			{ name: 'Stats', value: 'HP\nATK\nDEF\nSP.ATK\nSP.DEF\nSPD\nTOTAL', inline: true},
-			{ name: '\u200B', value: createStatsMeter(stats), inline: true},
-		)*/
 		.setFooter(dexURL);
 	return embed;
 }// End createEmbedMessage
@@ -63,7 +80,7 @@ function getStatColor(stat){
 	return "#009966";
 }// End getStatColor
 
-/*
+
 async function getPageHTML(url){
 	//import fetch from 'node-fetch';
 	const response = await fetch(url);
@@ -93,7 +110,6 @@ function getStatsFromDoc(doc){
 	}
 	return stats;
 }
-*/
 
 
 async function createHTMLImage(stats){
@@ -205,6 +221,7 @@ async function createHTMLImage(stats){
 	});
 	return ret;
 }
+*/
 
 module.exports = {
 
@@ -212,30 +229,31 @@ module.exports = {
 		.setName('pokemon')
 		.setDescription('*** prototype ***')
 		.addStringOption((option) => {
-			return option.setName('input')
+			return option.setName('pokemon')
 				.setDescription("info of input pokemon is returned")
-				.setRequired(false);
+				.setRequired(true);
 		}),
 
 	async execute(interaction) {
 		
 		await interaction.deferReply();
 		let input = interaction.options.data;
-		
 		if(input.length == 0){
 
 			createHTMLImage("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png").then(async (img) => {
 				await interaction.editReply({files: [img]});
 			});
 			
-			
-			
 		} else {
 			let name = input[0].value;
-			console.log(name);
 			try{
+
+				await interaction.editReply(await Pokemon.getPokemonMessage('https://pokeapi.co/api/v2/pokemon/' + name));
+				/*
 				// fetch pokemon data and output into embed
-				//let pokespecies = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + name).then(res => res.json());
+				let pokespecies = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + name).then(res => res.json());
+				let selectMenu = createSelectMenu(pokespecies.varieties, name);
+				//console.log(selectMenu);
 				let pokedata = await fetch('https://pokeapi.co/api/v2/pokemon/' + name).then(res => res.json());
 				name = name[0].toUpperCase() + name.slice(1);
 				let pokeurl = dbPartialURL + name.toLowerCase();
@@ -244,10 +262,11 @@ module.exports = {
 				let pokeability = pokedata.abilities.map(({ability}) => ability.name);
 				let pokestat = pokedata.stats.map(({base_stat}) => base_stat);	
 				let attachment = new MessageAttachment('placeholder.jpeg', 'placeholder.jpeg');	
-				await interaction.editReply({embeds: [createEmbedMessage(name, pokeurl, pokeimg, poketype, pokeability, pokestat, true)], files:[attachment]});
+				await interaction.editReply({components:[selectMenu], embeds: [createEmbedMessage(name, pokeurl, pokeimg, poketype, pokeability, pokestat, true)], files:[attachment]});
 				let check = await createHTMLImage(pokestat);
 				attachment = new MessageAttachment(check, `${name}.jpeg`);
-				await interaction.editReply({embeds: [createEmbedMessage(name, pokeurl, pokeimg, poketype, pokeability, pokestat, false)], files:[attachment]});
+				await interaction.editReply({components:[selectMenu], embeds: [createEmbedMessage(name, pokeurl, pokeimg, poketype, pokeability, pokestat, false)], files:[attachment]});
+				*/
 			}catch(err){
 				console.log(err);
 				await interaction.editReply(`Pokemon does not exist!`);
