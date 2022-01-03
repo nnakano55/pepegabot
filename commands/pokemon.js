@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const Pokemon = require('../app_modules/pokemonMessage')
-
 /*
 //const DOMParser = require('dom-parser');
 
@@ -248,7 +247,8 @@ module.exports = {
 			let name = input[0].value;
 			try{
 
-				await interaction.editReply(await Pokemon.getPokemonMessage('https://pokeapi.co/api/v2/pokemon/' + name));
+				await interaction.editReply(await Pokemon.getPokemonMessage('https://pokeapi.co/api/v2/pokemon/' + name, true));
+				await interaction.editReply(await Pokemon.getPokemonMessage('https://pokeapi.co/api/v2/pokemon/' + name, false));
 				/*
 				// fetch pokemon data and output into embed
 				let pokespecies = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + name).then(res => res.json());

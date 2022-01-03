@@ -179,7 +179,7 @@ module.exports = {
 		//let attachment = new MessageAttachment('placeholder.jpeg', 'placeholder.jpeg');	
 		//await interaction.editReply({components:[selectMenu], embeds: [createEmbedMessage(name, pokeurl, pokeimg, poketype, pokeability, pokestat, true)], files:[attachment]});
 		let check = await createHTMLImage(pokestat);
-		attachment = placeholder ? new MessageAttachment('placeholder.jpeg', `placeholder.jpeg`) : new MessageAttachment(check, `${name}.jpeg`);
+		let attachment = placeholder ? new MessageAttachment('placeholder.jpeg', `placeholder.jpeg`) : new MessageAttachment(check, `${name}.jpeg`);
 		return {components:[selectMenu], embeds: [createEmbedMessage(name, pokeurl, pokeimg, poketype, pokeability, pokestat, placeholder)], files:[attachment]};
 	},
 };
